@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import {v4 as uuid} from 'uuid'
+import axios from 'axios'
 import About from './components/pages/About'
 import Header from './components/layout/Header'
 import Todos from './components/Todos'
@@ -9,23 +10,7 @@ import AddTodo from './components/AddTodo'
 
 class App extends React.Component {
   state = {
-    todos:[
-      {
-        id: uuid(),
-        title: "Take out the trash",
-        completed: false
-      },
-      {
-        id: uuid(),
-        title: "Family Dinner",
-        completed: false
-      },
-      {
-        id: uuid(),
-        title: "Work meeting",
-        completed: false
-      },
-    ]
+    todos:[]
   }
 
   addTodo = (title) => {
@@ -38,16 +23,21 @@ class App extends React.Component {
   }
 
   markComplete = (id) => {
-    this.setState({todos: this.state.todos.map(todo =>{
+    this.setState({todos: this.state.todos.map(todo => {
       todo.completed = todo.id === id ? !todo.completed: todo.completed;
-      return todo
+      return todo;
     })})
   }
   
   delTodo = (id) => {
-    this.setState({todos: [...this.state.todos.filter(todo => todo.id !== id)]})
+    this.setState({todos: [...this.state.todos.filter(todo => todo.id !== id)]});
   }
   
+  componentDidMount() {
+    axios.get('https://jsonplaceholder.typicode.com/todos?_limit=15')
+      .then(res => this.setState({todos:res.data}));
+  }
+
   render() {
     return (
       <Router>
